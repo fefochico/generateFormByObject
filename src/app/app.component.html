@@ -1,0 +1,4 @@
+<sf-form #sf [schema]="mySchema" [validators]="myValidators" (onChange)="value=$event.value" ></sf-form>
+{{value | json}}
+<br>
+<input type="button" value="enviar" (click)="onContinue()">
