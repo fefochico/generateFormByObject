@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ArrayProperty, FormProperty, ISchema, PropertyGroup, Validator } from 'ngx-schema-form';
 
 @Component({
@@ -29,27 +29,40 @@ export class AppComponent {
         type: "string",
         description: "Password (verification)",
         widget: { id: "my-custom-password" },
-        expectedValue: ''
       },
     },
     required: ["email", "password", "passwordCheck"],
   };
 
+  /*
   public myValidators: { [path: string]: Validator } = {
-    "/passwordCheck": (value: any, formProperty: FormProperty, form: PropertyGroup) => {
+    "/passwordCheck": (value: any, property: FormProperty, form: PropertyGroup) => {
       const passwordValue = form.getProperty("password")?.value;
-      if (value !== passwordValue) {
-        return [{ passwordCheck: { expectedValue: "same as 'password'" } }]; // ✅ SIN la barra "/"
+      if (value!= undefined && 
+        value !== passwordValue) {
+        return [{ passwordCheck: { expectedValue: "same as 'password'" } }];
       }
-      return [{ passwordCheck: {}}]; // ✅ SIN la barra "/"
+      return [{ passwordCheck: {}}];
+    },
+  };
+*/
+
+  myValidators:  { [path: string]: any } = {
+    "/passwordCheck": (value: any, property: FormProperty, form: PropertyGroup)=> {
+      const passwordProperty = form.getProperty("password");
+      if (
+        passwordProperty.value !== undefined &&
+        property.valid &&
+        value !== passwordProperty.value
+      ) {
+        return { passwordCheck: { expectedValue: "same as 'password'" } };
+      }
+      return null;
     },
   };
 
   onContinue(){
-    if (this.sfForm) {
-      this.sfForm.ngSubmit(); // Ejecuta la validación del formulario
-      console.log(this.sfForm.form.errors); // Muestra los errores en la consola
-      window.alert('¡Esto es una alerta!');
-    }
+    if(JSON.stringify(this.value) !== JSON.stringify({}))
+    alert(JSON.stringify(this.value));
   }
 }
